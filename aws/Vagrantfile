@@ -1,0 +1,53 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Dotenv.load
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+$script = <<SCRIPT
+#
+echo 'Start ShellScript'
+#Change Time Zone
+sudo cp -p /usr/share/zoneinfo/Japan /etc/localtime
+#Change Volume size
+sudo resize2fs /dev/sda1
+SCRIPT
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # Box Name
+  config.vm.box = "dummy"
+  config.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+  #config.vm.synced_folder "./", "/home/ec2-user/vagrant", create: true, owner: "ec2-user"
+  #config.vm.synced_folder ".", "/vagrant", disabled: true
+  #config.vm.synced_folder ".", "/vagrant", create: true
+
+  config.vm.provider :aws do |aws, override|
+    aws.access_key_id = ENV['AWS_ACCESS_KEY_ID']
+    aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+    aws.keypair_name = 'moritata'
+
+    aws.instance_type = "t2.micro"
+    aws.region = "ap-northeast-1"
+    aws.ami = "ami-29dc9228"
+    aws.security_groups = ENV['AWS_SECURITY_GROUP']
+
+    aws.subnet_id = ENV['AWS_SUBNET_ID']
+    aws.elastic_ip = true
+
+    #aws.user_data = "#!/bin/sh\nsed -i 's/^.*requiretty/#Defaults requiretty/' /etc/sudoers\n"
+    #aws.user_data = "#!/bin/sh\necho -e 'Defaults:username !requiretty' >> /etc/sudoers\n"
+    aws.user_data = "#!/bin/sh\necho -e 'Defaults:root !requiretty' >> /etc/sudoers\necho -e 'Defaults:ec2-user !requiretty' >> /etc/sudoers\n"
+
+    override.vm.synced_folder ".", "/home/ec2-user/vagrant", :disabled => true
+
+    override.ssh.username = ENV['AWS_SSH_USERNAME']
+    override.ssh.private_key_path = ENV['AWS_SSH_KEY']
+    #override.ssh.private_key_path = '~/.ssh/moritata.pem'
+
+  end
+
+  #config.vm.provision "shell", inline: $script
+
+end
