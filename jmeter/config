@@ -1,0 +1,44 @@
+Host test11
+  HostName 10.0.0.11
+  User ec2-user
+  Port 22
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/ec2-user/.ssh/moritata.pem
+  IdentitiesOnly yes
+  LogLevel FATAL
+
+Host test12
+  HostName 10.0.0.12
+  User ec2-user
+  Port 22
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/ec2-user/.ssh/moritata.pem
+  IdentitiesOnly yes
+  LogLevel FATAL
+
+Host test14
+  HostName 10.0.0.14
+  User ec2-user
+  Port 22
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/ec2-user/.ssh/moritata.pem
+  IdentitiesOnly yes
+  LogLevel FATAL
+
+Host test15
+  HostName 10.0.0.15
+  User ec2-user
+  Port 22
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile /home/ec2-user/.ssh/moritata.pem
+  IdentitiesOnly yes
+  LogLevel FATAL
+
