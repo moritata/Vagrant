@@ -39,6 +39,8 @@
       command: pip install fabric
     - name: install vagrant
       command: rpm -ihv https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.5_x86_64.rpm
+    - name: install vagrant plugin
+      command: vagrant plugin install vagrant-aws
 
     - name: download directory create.
       file: path="{{JAVA_DL_DIR}}" state=directory owner=root group=root mode=755
