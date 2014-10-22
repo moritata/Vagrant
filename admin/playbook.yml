@@ -6,7 +6,7 @@
   vars:
     HOME_DIR: /home/ec2-user
     JAVA_DL_URL: http://download.oracle.com/otn-pub/java/jdk/8u5-b13/jdk-8u5-linux-x64.rpm
-    JAVA_DL_DIR: '{{HOME_DIR}}/rpms
+    JAVA_DL_DIR: '{{HOME_DIR}}/rpms'
     JAVA_DL_PATH: '{{JAVA_DL_DIR}}/jdk-8u5-linux-x64.rpm'
     EPEL_GPG_KEY: http://ftp.riken.jp/Linux/fedora/epel/RPM-GPG-KEY-EPEL-6
     EPEL_URL: https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
@@ -63,7 +63,12 @@
     - name: download jmeter binary package
       command: 'wget -q -O {{JMETER_DL_PATH}} --no-cookies --no-check-certificate {{JMETER_DL_URL}} creates={{JMETER_DL_PATH}}'
     - name: jmeter unarchive
-      unarchive: src='{{JMETER_DL_PATH}}' dest='{{HOME_DIR}}'
+      unarchive: src='{{JMETER_DL_PATH}}' dest='{{HOME_DIR}}' copy=no
+
+    - name: repository directory
+      command: 'mkdir -p {{HOME_DIR}}/repos/'
+    - name: github clone
+      git: repo=https://github.com/moritata/Vagrant.git dest='{{HOME_DIR}}/repos/' 
 
   handlers:
     - name: restart sshd
