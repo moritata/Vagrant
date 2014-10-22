@@ -1,14 +1,17 @@
 ---
 - name: Setup ecs
   hosts: all
-  remote_user: aws_user
+  remote_user: ubuntu
   sudo: yes
   vars:
     EPEL_GPG_KEY: http://ftp.riken.jp/Linux/fedora/epel/RPM-GPG-KEY-EPEL-6
     EPEL_URL: https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    HOME_DIR: '/home/ubuntu'
     JMETER_DL_URL: http://ftp.meisei-u.ac.jp/mirror/apache/dist//jmeter/binaries/apache-jmeter-2.11.zip
-    JMETER_DL_DIR: '~/src/'
+    JMETER_TGZ_URL: http://ftp.meisei-u.ac.jp/mirror/apache/dist//jmeter/binaries/apache-jmeter-2.11.tgz
+    JMETER_DL_DIR: '{{HOME_DIR}}/src/'
     JMETER_DL_PATH: '{{JMETER_DL_DIR}}/apache-jmeter-2.11.zip'
+    JMETER_TGZ_PATH: '{{JMETER_DL_DIR}}/apache-jmeter-2.11.tgz'
 
   tasks:
     - name: disallow password authentication
@@ -16,21 +19,21 @@
       notify: restart sshd
 
     - name: JDK add repository
-      command: add-apt-repository ppa:webupd8team/java
+      command: add-apt-repository -y ppa:webupd8team/java
     - name: apt update
-      command: apt-get  update
+      apt: update_cache=yes
     - name: apt upgrade
-      command: apt-get  -y upgrade
+      apt: upgrade=dist
     - name: install oracle-java8-installer
-      command: apt-get -y install oracle-java8-installer
-    - name: install install oracle-java8-set-default 
-      command: apt-get -y install install oracle-java8-set-default 
-
+      apt: name=oracle-java8-installer state=present
+    - name: install oracle-java8-set-default
+      apt: name=oracle-java8-set-default state=present
     - name: jmeter directory setup
-      file: path={{JMETER_DL_DIR}} state=directory owner=root group=root mode=755
+      file: path={{JMETER_DL_DIR}} state=directory owner=ubuntu group=ubuntu mode=755
     - name: download jmeter binary package
-      command: 'wget -q -O {{JMETER_DL_PATH}} --no-cookies --no-check-certificate {{JMETER_DL_URL}} creates={{JMETER_DL_PATH}}'
-
+      command: 'wget -q -O {{JMETER_TGZ_PATH}} --no-cookies --no-check-certificate {{JMETER_TGZ_URL}} creates={{JMETER_TGZ_PATH}}'
+    - name: jmeter binary package unarchive
+      unarchive: src='{{JMETER_TGZ_PATH}}' dest='{{HOME_DIR}}' copy=no
 
   handlers:
     - name: restart sshd
